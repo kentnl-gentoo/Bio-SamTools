@@ -571,9 +571,12 @@ bama_l_aux(b,...)
     Bio::DB::Bam::Alignment b
 PROTOTYPE: $;$
 CODE:
-    if (items > 1)
-      b->l_aux = SvIV(ST(1));
-    RETVAL=b->l_aux;
+    if (items > 1) {
+      RETVAL = SvIV(ST(1));
+      }
+    else {
+      RETVAL=bam_get_l_aux(b);
+    }
 OUTPUT:
     RETVAL
 
