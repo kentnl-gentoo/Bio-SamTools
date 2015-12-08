@@ -53,13 +53,12 @@ L<Bio::Perl>, L<Bio::DB::Sam>, L<Bio::DB::Bam::Alignment>
 Lincoln Stein E<lt>lincoln.stein@oicr.on.caE<gt>.
 E<lt>lincoln.stein@bmail.comE<gt>
 
-Copyright (c) 2009 Ontario Institute for Cancer Research.
+Copyright (c) 2009-2015 Ontario Institute for Cancer Research.
 
-This package and its accompanying libraries is free software; you can
-redistribute it and/or modify it under the terms of the GPL (either
-version 1, or at your option, any later version) or the Artistic
-License 2.0.  Refer to LICENSE for the full license text. In addition,
-please see DISCLAIMER.txt for disclaimers of warranty.
+This package and its accompanying libraries are free software; you can
+redistribute it and/or modify it under the terms of the Artistic
+License 2.0, the Apache 2.0 License, or the GNU General Public License
+(version 1 or higher).  Refer to LICENSE for the full license text.
 
 =cut
 
@@ -73,7 +72,7 @@ our @EXPORT = qw(CIGAR_SYMBOLS BAM_CIGAR_SHIFT BAM_CIGAR_MASK
                  BAM_CSOFT_CLIP BAM_CHARD_CLIP BAM_CPAD FLAGS RFLAGS);
 our @EXPORT_OK = @EXPORT;
 
-use constant CIGAR_SYMBOLS   => [qw(M I D N S H P)];
+use constant CIGAR_SYMBOLS   => [qw(M I D N S H P = X)];
 use constant BAM_CIGAR_SHIFT => 4;
 use constant BAM_CIGAR_MASK  => (1 << BAM_CIGAR_SHIFT) - 1;
 use constant BAM_CMATCH      => 0;

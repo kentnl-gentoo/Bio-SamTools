@@ -40,13 +40,12 @@ L<Bio::Perl>, L<Bio::DB::Sam>, L<Bio::DB::Bam::Constants>
 Lincoln Stein E<lt>lincoln.stein@oicr.on.caE<gt>.
 E<lt>lincoln.stein@bmail.comE<gt>
 
-Copyright (c) 2009 Ontario Institute for Cancer Research.
+Copyright (c) 2009-2015 Ontario Institute for Cancer Research.
 
-This package and its accompanying libraries is free software; you can
-redistribute it and/or modify it under the terms of the GPL (either
-version 1, or at your option, any later version) or the Artistic
-License 2.0.  Refer to LICENSE for the full license text. In addition,
-please see DISCLAIMER.txt for disclaimers of warranty.
+This package and its accompanying libraries are free software; you can
+redistribute it and/or modify it under the terms of the Artistic
+License 2.0, the Apache 2.0 License, or the GNU General Public License
+(version 1 or higher).  Refer to LICENSE for the full license text.
 
 =cut
 
@@ -67,7 +66,7 @@ sub new {
     $self->add_segment($self->split_splices)
 	if $sam->split_splices && $align->cigar_str =~ /N/;
 
-    return $self; 
+    return $self;
 }
 
 sub AUTOLOAD {
@@ -148,7 +147,7 @@ sub split_splices {
 	} else {
 	    $partial_cigar .= "$operation$count";
 	}
-	$end  += $count if $operation =~ /^[MDSHP]/i;
+	$end  += $count if $operation =~ /^[MDSHP=X]/i;
 	$skip += $count if $operation eq 'N';
 	if ($operation eq 'H' and $start == 0) {
 	    $qseq = 'N' x $count . $qseq;
@@ -219,13 +218,15 @@ sub subseq {
 
 sub padded_alignment {
     my $self  = shift;
-
     my $cigar = $self->cigar_array;
+    my $real_ref = 0;
+    $real_ref = 1 if($self->{sam}->force_refseq || !$self->has_tag('MD'));
 
     my $sdna  = $self->dna;
     my $tdna  = $self->query->dna;
 
-    my ($pad_source,$pad_target,$pad_match);
+
+    my ($pad_source,$pad_target,$pad_match, $char_source, $char_target);
     for my $event (@$cigar) {
 	my ($op,$count) = @$event;
 	if ($op eq 'I' || $op eq 'S') {
@@ -233,8 +234,18 @@ sub padded_alignment {
 	    $pad_target .= substr($tdna,0,$count,'');
 	    $pad_match  .= ' ' x $count;
 	}
-	elsif ($op eq 'D' || $op eq 'N') {
+	elsif ($op eq 'D') {
 	    $pad_source .= substr($sdna,0,$count,'');
+	    $pad_target .= '-' x $count;
+	    $pad_match  .= ' ' x $count;
+	}
+	elsif ($op eq 'N') {
+	    if($real_ref) {
+	      $pad_source .= substr($sdna,0,$count,'');
+	    }
+	    else {
+	      $pad_source .= '-' x $count;
+	    }
 	    $pad_target .= '-' x $count;
 	    $pad_match  .= ' ' x $count;
 	}
@@ -245,10 +256,14 @@ sub padded_alignment {
 	}
 	elsif ($op eq 'H') {
 	    # nothing needs to be done in this case
-	} else {  # everything else is assumed to be a match -- revisit
-	    $pad_source .= substr($sdna,0,$count,'');
-	    $pad_target .= substr($tdna,0,$count,'');
-	    $pad_match  .= '|' x $count;
+	} else {  # everything else is assumed to be a match
+	    while($count-- > 0) {
+	      $char_source = substr($sdna,0,1,'');
+	      $char_target = substr($tdna,0,1,'');
+	      $pad_source .= $char_source;
+	      $pad_target .= $char_target;
+	      $pad_match .= $char_source eq $char_target ? '|' : ' ';
+	    }
 	}
     }
     return ($pad_source,$pad_match,$pad_target);
@@ -267,7 +282,7 @@ sub dna {
 	my $seq   = '';
 	for my $op (@$cigar) {
 	    my ($operation,$count) = @$op;
-	    if ($operation eq 'M') {
+	    if ($operation eq 'M' || $operation eq '=' || $operation eq 'X') {
 		$seq .= substr($qseq,0,$count,''); # include these residues
 	    } elsif ($operation eq 'S' or $operation eq 'I') {
 		substr($qseq,0,$count,'');         # skip soft clipped and inserted residues
@@ -321,7 +336,7 @@ sub get_tag_values {
     my $tag  = shift;
     defined $tag or return;
 
-    return $self->{align}->get_tag_values($tag) 
+    return $self->{align}->get_tag_values($tag)
 	if $self->expand_flags;
     if ($tag eq 'FLAGS') {
 	$self->flag_str;
@@ -334,7 +349,7 @@ sub has_tag {
     my $self = shift;
     my $tag  = shift;
     defined $tag or return;
-    $self->{align}->get_tag_values($tag) 
+    $self->{align}->get_tag_values($tag)
 	if $self->expand_flags;
     if ($tag eq 'FLAGS') {
 	return 1;
@@ -373,7 +388,7 @@ sub gff3_string {
 		map {$_->gff3_string($id)} @rsf);
 }
 
-sub phase { return } 
+sub phase { return }
 
 sub escape {
   my $self     = shift;

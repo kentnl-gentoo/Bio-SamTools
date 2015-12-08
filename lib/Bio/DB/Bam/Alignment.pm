@@ -586,11 +586,11 @@ sub mate_len {
     my $len     = $self->length;
 
     my $adjust = 0;
-    my @cigar   = $self->cigar_str =~ /(\d+)(\w)/g;
-    while (@cigar) {
-	my ($len,$op) = splice(@cigar,0,2);
-	$adjust += $len if $op eq 'I';
-	$adjust -= $len if $op eq 'D';
+    my @cigar = $self->cigar_array;
+    for my $event (@cigar) {
+        my ($op,$len) = @$event;
+        $adjust += $len if $op eq 'I';
+        $adjust -= $len if $op eq 'D';
     }
 
     return $adjust + $ins_len + ($self->start-$self->mate_start) if $ins_len > 0;
@@ -634,13 +634,13 @@ L<Bio::Perl>, L<Bio::DB::Sam>, L<Bio::DB::Bam::Constants>
 Lincoln Stein E<lt>lincoln.stein@oicr.on.caE<gt>.
 E<lt>lincoln.stein@bmail.comE<gt>
 
-Copyright (c) 2009 Ontario Institute for Cancer Research.
+Copyright (c) 2009-2015 Ontario Institute for Cancer Research.
 
-This package and its accompanying libraries is free software; you can
-redistribute it and/or modify it under the terms of the GPL (either
-version 1, or at your option, any later version) or the Artistic
-License 2.0.  Refer to LICENSE for the full license text. In addition,
-please see DISCLAIMER.txt for disclaimers of warranty.
+This package and its accompanying libraries are free software; you can
+redistribute it and/or modify it under the terms of the Artistic
+License 2.0, the Apache 2.0 License, or the GNU General Public License
+(version 1 or higher).  Refer to LICENSE for the full license text.
+
 
 =cut
 

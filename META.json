@@ -4,7 +4,7 @@
       "Lincoln Stein <lincoln.stein@gmail.com>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.421",
+   "generated_by" : "Module::Build version 0.4211",
    "license" : [
       "perl_5"
    ],
@@ -64,7 +64,7 @@
       },
       "Bio::DB::Sam" : {
          "file" : "lib/Bio/DB/Sam.pm",
-         "version" : "1.41"
+         "version" : "1.42"
       },
       "Bio::DB::Sam::Constants" : {
          "file" : "lib/Bio/DB/Sam/Constants.pm"
@@ -91,5 +91,5 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "1.41"
+   "version" : "1.42"
 }

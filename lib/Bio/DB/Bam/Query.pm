@@ -119,8 +119,9 @@ sub low {
     my $cigar_arry = $$self->cigar_array;
     my $start      = 1;
     for my $c (@$cigar_arry) {
-	last unless CIGAR_SKIP->{$c->[0]};
-	$start += $c->[1];
+      next if CIGAR_SYMBOLS->[BAM_CHARD_CLIP] eq $c->[0];
+      last unless CIGAR_SKIP->{$c->[0]};
+      $start += $c->[1];
     }
     $start;
 }
@@ -133,8 +134,9 @@ sub high {
     # alignment stops at first non-clip CIGAR position
     my $i = $len - 1;
     for my $c (reverse @$cigar_arry) {
-	last unless CIGAR_SKIP->{$c->[0]};
-	$len -= $c->[1];
+      next if CIGAR_SYMBOLS->[BAM_CHARD_CLIP] eq $c->[0];
+      last unless CIGAR_SKIP->{$c->[0]};
+      $len -= $c->[1];
     }
     return $len;
 }
@@ -158,7 +160,7 @@ orientation.
 
 =cut
 
-sub seq { 
+sub seq {
     my $self = shift;
     my $dna  = $self->dna;
     return Bio::PrimarySeq->new(-seq => $dna,
@@ -196,7 +198,7 @@ If the query was reversed to align it, -1. Otherwise +1.
 
 =cut
 
-sub strand { 
+sub strand {
     my $self = shift;
     return $$self->reversed ? -1 : 1;
 }
@@ -234,12 +236,11 @@ L<Bio::Perl>, L<Bio::DB::Sam>, L<Bio::DB::Bam::Alignment>, L<Bio::DB::Bam::Const
 Lincoln Stein E<lt>lincoln.stein@oicr.on.caE<gt>.
 E<lt>lincoln.stein@bmail.comE<gt>
 
-Copyright (c) 2009 Ontario Institute for Cancer Research.
+Copyright (c) 2009-2015 Ontario Institute for Cancer Research.
 
-This package and its accompanying libraries is free software; you can
-redistribute it and/or modify it under the terms of the GPL (either
-version 1, or at your option, any later version) or the Artistic
-License 2.0.  Refer to LICENSE for the full license text. In addition,
-please see DISCLAIMER.txt for disclaimers of warranty.
+This package and its accompanying libraries are free software; you can
+redistribute it and/or modify it under the terms of the Artistic
+License 2.0, the Apache 2.0 License, or the GNU General Public License
+(version 1 or higher).  Refer to LICENSE for the full license text.
 
 =cut
