@@ -25,9 +25,9 @@
 
 #include <unistd.h>
 #include <math.h>
-#include "bam.h"
-#include "khash.h"
-#include "faidx.h"
+#include "bam-0.1-legacy/bam.h"
+#include "bam-0.1-legacy/khash.h"
+#include "bam-0.1-legacy/faidx.h"
 
 /* stolen from bam_aux.c */
 #define MAX_REGION 1<<29
