@@ -4,8 +4,8 @@ use strict;
 use Module::Build;
 use Module::Load::Conditional qw(can_load);
 
-my $HeaderFile = "bam.h";
-my $LibFile    = "libbam.a";
+my $HeaderFile = "bam/bam.h";
+my $LibFile    = "libbam.so";
 my $ReadLine;
 
 my ($sam_include,$sam_lib) = find_sam(); # may exit with error here
@@ -39,7 +39,7 @@ my $build = $class->new(
     dist_abstract      => 'Perl interface to SamTools library for DNA sequencing',
     license            => 'perl',
     include_dirs       => [$sam_include],
-    extra_linker_flags => ["-L$sam_lib",'-lbam','-lpthread','-lz'],
+    extra_linker_flags => ["-L$sam_lib",'-lbam','-lhts','-lpthread','-lz'],
 
     extra_compiler_flags=>[
 

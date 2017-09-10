@@ -25,9 +25,9 @@
 
 #include <unistd.h>
 #include <math.h>
-#include "bam.h"
-#include "khash.h"
-#include "faidx.h"
+#include "bam/bam.h"
+#include "htslib/khash.h"
+#include "htslib/faidx.h"
 
 /* stolen from bam_aux.c */
 #define MAX_REGION 1<<29
@@ -571,9 +571,12 @@ bama_l_aux(b,...)
     Bio::DB::Bam::Alignment b
 PROTOTYPE: $;$
 CODE:
-    if (items > 1)
-      b->l_aux = SvIV(ST(1));
-    RETVAL=b->l_aux;
+    if (items > 1) {
+      RETVAL = SvIV(ST(1));
+      }
+    else {
+      RETVAL=bam_get_l_aux(b);
+    }
 OUTPUT:
     RETVAL
 
