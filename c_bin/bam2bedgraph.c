@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "sam.h"
+#include "bam-0.1-legacy/sam.h"
 
 typedef struct {
   uint32_t ltid;
